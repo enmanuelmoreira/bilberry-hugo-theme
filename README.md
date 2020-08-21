@@ -26,12 +26,15 @@ If you like this theme and/or use it for commercial purposes, please support me!
   - [Post Types](#Post-Types)
   - [Pages and External Links](#Pages-and-External-Links)
   - [Reposting an Article / Duplicated Content [SEO]](#Reposting-an-Article--Duplicated-Content-SEO)
+  - [Overwrite the calculated reading time](#Overwrite-the-calculated-reading-time)
   - [Summary Breaks](#Summary-Breaks)
   - [Disqus comments](#Disqus-comments)
   - [Responsive Design](#Responsive-Design)
   - [Automatic Image Resizing](#Automatic-Image-Resizing)
+  - [Image Modal Zoom](#Image-Modal-Zoom)
   - [Permanent Top Navigation](#Permanent-Top-Navigation)
   - [MathJAX Markup](#MathJAX-Markup)
+  - [Disabled Javascript Support](#Disabled-Javascript-Support)
 - [Favicons](#Favicons)
 - [Custom 404 site](#Custom-404-site)
 - [Custom Post Types](#Custom-Post-Types)
@@ -89,8 +92,10 @@ Also, check out this [tutorial](https://www.kiroule.com/article/start-blogging-w
 
 ## Configuration
 To configure your site according to your needs, just open the `config.toml` file in your project folder and adjust the settings.
-All options you can and should customize are commented so it should be no problem for you to get it done.
+All options you can and should customize are commented out, so it should be no problem for you to get it done.
 
+Also, you can read this [write-up](https://www.kiroule.com/article/manage-environment-specific-settings-for-hugo-based-website/) on how to manage
+environment-specific settings for a Hugo-based website.
 
 ## Features
 
@@ -112,7 +117,7 @@ If you want to include the algolia search for your site, you have to follow thes
 4. Switch over to `API Keys` and copy your `Application ID`, `Search-Only API Key` and chosen `Index name` to your `config.toml` file.
 5. Ensure that `algolia_search = true` is set.
 6. Check the next section [Update the search index](#update-the-search-index), follow the steps and come back again
-7. Go to the tab `Configuration` of your newly created indices, select the `Facets` in the section `FILTERING AND FACETING` and add the `language` attribute with the `filter only` modifier in the `Attributes for faceting` option. If, after adding the `language` attribute, the `Unknown attribute` error is shown, ignore it. 
+7. Go to the tab `Configuration` of your newly created indices, select the `Facets` in the section `FILTERING AND FACETING` and add the `language` attribute with the `filter only` modifier in the `Attributes for faceting` option. If, after adding the `language` attribute, the `Unknown attribute` error is shown, ignore it.
 8. Done.
 
 
@@ -126,6 +131,7 @@ Execute the 'hugo' command in the site's root directory to publish your changes.
     * Login to your Algolia account, open your index and click at `Add records manually`.
     * Paste the copied text from the `index.json` file.
     * Verify in the `Browse` tab of your index that the index records were uploaded correctly.
+    * If case you have a multi-language setup, make sure that you repeat the steps above for all `public/{LANG}/index.json` files
 
 * Automated Upload
     * Prerequisites: installed Python 3 and Algolia API's [Python client](https://github.com/algolia/algoliasearch-client-python). The API Python client can be installed with the following command:
@@ -137,9 +143,10 @@ Execute the 'hugo' command in the site's root directory to publish your changes.
     python3 algolia-index-upload.py -f public/index.json -a <algolia-app-id> -k <algolia-admin-api-key> -n <algolia-index-name>
     ```
     * The `algolia-admin-api-key` argument, namely your Algolia account's `Admin API Key`, is used to create, update, and delete indices, and it should be kept secret.
-    * Login to your Algolia account and verify in the `Browse` tab of your index that the index records were uploaded correctly. 
-    
-Also, you can read this [write-up](https://www.kiroule.com/article/automate-index-upload-to-algolia-search/) on how to automate 
+    * Login to your Algolia account and verify in the `Browse` tab of your index that the index records were uploaded correctly.
+    * If case you have a multi-language setup, make sure that you repeat the steps above for all `public/{LANG}/index.json` files
+
+Also, you can read this [write-up](https://www.kiroule.com/article/automate-index-upload-to-algolia-search/) on how to automate
 index upload to Algolia Search if you host your Bilberry theme-based website on Netlify.
 
 ### Keyboard Shortcuts
@@ -150,7 +157,7 @@ To close it again you can enter `esc` at any time.
 
 ### Post Types
 Bilberry comes with a bunch of predefined post types.
-Available post types are `article`, `audio`, `code`, `gallery`, `link`, `page`, `quote` and `video`.
+Available post types are `article`, `audio`, `code`, `gallery`, `link`, `page`, `quote`, `status` and `video`.
 
 To use a post type, just create new content via the hugo command.<br>
 For example:
@@ -181,6 +188,13 @@ original_url: "https://example.org/path/to/content"
 
 Further Information:
 - [Wikipedia](https://en.wikipedia.org/wiki/Canonical_link_element)
+
+### Overwrite the calculated reading time
+If you want to overwrite the automatically calculated reading time for a post you can use the following front matter confguration option:
+
+```
+readingTime: 7 # integer for the amount of minutes
+```
 
 ### Summary Breaks
 You can influence the summary output on the listing pages (such as the home page or the category or tag pages) in different ways:
@@ -241,7 +255,10 @@ Bilberry is optimized for desktop and mobile devices (tablets and smartphones).
 The bilberry theme handles image crops and resizes automatically by default.
 However, if you want to disable this functionality in general, you can set `resizeImages: false` in your `config.toml` file.
 
-If you want to disable this functionality just on some posts, you can set `resizeImages: false` in your post's settings.
+If you want to disable this functionality just on some posts, you can set `resizeImages: false` in your post's frontmatter settings.
+
+### Image Modal Zoom
+When including an image that has larger dimensions than the content area, the image gets clickable and a bigger version will open in a lightbox.
 
 ### Permanent Top Navigation
 If you want to permanently display the top navigation with the algolia search bar and the `page` entries, you can set the `permanentTopNav` option to `true` in your site's config file.
@@ -249,8 +266,13 @@ If you want to permanently display the top navigation with the algolia search ba
 Note that on mobile devices the navigation will still be collapsed because otherwise, the navigation menu hides the essential parts of your site.
 
 ### MathJAX Markup
-
 If you want to add [MathJAX](https://www.mathjax.org) markup support, set parameter `enable_mathjax` option to `true` in your site's config file.
+
+### Disabled Javascript Support
+Although this theme has a lot of features that only work with enabled javascript, it also fully supports disabled javascript.
+Disabling javascript will not break any styles or essential functionality on the site.
+
+Just head over to the demo page, disable javascript in your browser and check the results!
 
 ## Favicons
 Using favicons nowadays is not a trivial thing.

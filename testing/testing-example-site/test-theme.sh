@@ -94,7 +94,7 @@ testContentAndContinue '<a href="https://example.com/tags/c&#43;&#43;/">C&#43;&#
 testContentAndContinue '<a href="https://example.com/tags/t%C3%A4sting&#43;&#43;/">tästing&#43;&#43;</a>' "$TARGET_DIR/article/täst/index.html"
 testContentAndContinue '<a href="https://example.com/de/article/t%C3%A4st/">de</a>' "$TARGET_DIR/article/täst/index.html"
 testContentAndContinue '<a href="https://example.com/article/t%C3%A4st/">Umlauts Täst&#43;&#43;</a>' "$TARGET_DIR/article/täst/index.html"
-testContentAndContinue '<a href="https://example.com/quote/t%C3%A4st-quote/">Quote Umlauts Täst&#43;&#43;</a' "$TARGET_DIR/article/täst/index.html"
+testContentAndContinue '<p>This is a umlauts-test in Quotes äüöß++</p>' "$TARGET_DIR/quote/index.html"
 testContentAndContinue '<a href="/categories/t%C3%A4st&#43;&#43;">Täst&#43;&#43;
                         (2)</a>' "$TARGET_DIR/article/täst/index.html"
 
@@ -106,40 +106,44 @@ testContentAndContinue '<a href="https://example.com/de/tags/c&#43;&#43;/">C&#43
 testContentAndContinue '<a href="https://example.com/de/tags/t%C3%A4sting&#43;&#43;/">tästing&#43;&#43;</a>' "$TARGET_DIR/de/article/täst/index.html"
 testContentAndContinue '<a href="https://example.com/article/t%C3%A4st/">en</a>' "$TARGET_DIR/de/article/täst/index.html"
 testContentAndContinue '<a href="https://example.com/de/article/t%C3%A4st/">de Umlauts Täst&#43;&#43;</a>' "$TARGET_DIR/de/article/täst/index.html"
-testContentAndContinue '<a href="https://example.com/de/quote/t%C3%A4st-quote/">de Quote Umlauts Täst&#43;&#43;</a' "$TARGET_DIR/de/article/täst/index.html"
+testContentAndContinue '<p>de This is a umlauts-test in quotes äüöß++</p>' "$TARGET_DIR/de/quote/index.html"
 testContentAndContinue '<a href="/de/categories/t%C3%A4st&#43;&#43;">Täst&#43;&#43;
                         (2)</a>' "$TARGET_DIR/de/article/täst/index.html"
 
 # quote/täst-quote [en]
 echo "## Testing quote/täst-quote [en]"
-testContentAndContinue '<a href="/author/%c3%a4-%c3%9f&#43;">ä ß&#43;</a>' "$TARGET_DIR/quote/täst-quote/index.html"
+testContentAndContinue '<a href="/author/%c3%a4-%c3%9f&#43;">
+  ä ß&#43;
+</a>' "$TARGET_DIR/quote/täst-quote/index.html"
 
 # quote/täst-quote [de]
 echo "## Testing quote/täst-quote [de]"
-testContentAndContinue '<a href="/de/author/%c3%a4-%c3%9f&#43;">ä ß&#43;</a>' "$TARGET_DIR/de/quote/täst-quote/index.html"
+testContentAndContinue '<a href="/de/author/%c3%a4-%c3%9f&#43;">
+  ä ß&#43;
+</a>' "$TARGET_DIR/de/quote/täst-quote/index.html"
 
 
-echo "# Build stability test [not working right now]"
+echo "# Build stability test"
 
-#BUILD_COUNT=5
-#for ((i=0; i<BUILD_COUNT; i++)) ; do
-#  echo "Building ($i)"
-#  cleanBuildHugo > /dev/null
-#  rm -rf "$TARGET_DIR$i"
-#  mv "$TARGET_DIR" "$TARGET_DIR$i"
-#done
-#
-#DIFF_OUT=""
-#set +e
-#for ((i=1; i<BUILD_COUNT; i++)) ; do
-#  echo "Calculating differences between $i and $((i-1))"
-#  DIFF_OUT="$DIFF_OUT$(diff -rq "$TARGET_DIR$i" "$TARGET_DIR$((i-1))")"
-#done
-#set -e
-#
-#if [[ -z $DIFF_OUT ]]; then
-#    failButContinue "Build is instable! expected to receive no differences but was: $DIFF_OUT"
-#fi
+BUILD_COUNT=100
+for ((i=0; i<BUILD_COUNT; i++)) ; do
+ echo "Building ($i)"
+ cleanBuildHugo > /dev/null
+ rm -rf "$TARGET_DIR$i"
+ mv "$TARGET_DIR" "$TARGET_DIR$i"
+done
+
+DIFF_OUT=""
+set +e
+for ((i=1; i<BUILD_COUNT; i++)) ; do
+ echo "Calculating differences between $i and $((i-1))"
+ DIFF_OUT="$DIFF_OUT$(diff -rq "$TARGET_DIR$i" "$TARGET_DIR$((i-1))")"
+done
+set -e
+
+if [[ $DIFF_OUT != "" ]]; then
+   failButContinue "Build is instable! expected to receive no differences but was: $DIFF_OUT"
+fi
 
 
 
